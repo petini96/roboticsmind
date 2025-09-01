@@ -18,7 +18,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Configurar SSH para acesso à EC2
+      # Configurar SSH para acesso à VPS
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh/
@@ -38,18 +38,18 @@ jobs:
           ANALYTICS_APP_NAME=${{ secrets.ANALYTICS_APP_NAME }}
           EOF
 
-      # Copiar arquivos para a EC2
-      - name: Copy files to EC2
+      # Copiar arquivos para a VPS
+      - name: Copy files to VPS
         run: |
           rsync -avz --exclude '.git' -e "ssh -i ~/.ssh/mykeys.pem -o ServerAliveInterval=60 -o ServerAliveCountMax=60" . ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/roboticsmind
 
-      # Executar Docker Compose na EC2 via SSH
+      # Executar Docker Compose na VPS via SSH
       - name: Deploy with Docker Compose
         run: |
           ssh -i ~/.ssh/mykeys.pem -o ServerAliveInterval=60 -o ServerAliveCountMax=60 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/${{ secrets.EC2_USER }}/roboticsmind
-            docker-compose -f docker-compose.yml down --remove-orphans
+            docker compose -f docker-compose.yml down --remove-orphans
             docker system prune -f
-            docker-compose -f docker-compose.yml up -d --build
+            docker compose -f docker-compose.yml up -d --build
           EOF
           
