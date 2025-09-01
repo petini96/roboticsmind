@@ -1,0 +1,17 @@
+services:
+  app:
+    container_name: app-quasar
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - default
+      
+networks:
+  default:
+    driver: bridge

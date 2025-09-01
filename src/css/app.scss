@@ -1,0 +1,44 @@
+
+@font-face {
+  font-family: olivettaRegular;
+  src: url(./fonts/olivetta-regular.otf);
+}
+
+@font-face {
+  font-family: primotPro;
+  src: url(./fonts/primot_pro_w01_regular.ttf);
+}
+
+@font-face {
+  font-family: thirstyScript;
+  src: url(./fonts/thirsty_script_extra_bold_demo.otf);
+}
+
+// app global css in SCSS form
+.body--light {
+  background-color: #fff8ff;
+}
+
+.body--dark {
+  background-color: black;
+}
+
+h1 h2 h3 h4 h5 h6 {
+  font-family: primotPro;
+}
+
+.font-olivetta-regular{
+  font-family: olivettaRegular;
+}
+
+.font-primoto-pro{
+  font-family: primotPro;
+}
+
+.font-thirsty-script{
+  font-family: thirstyScript;
+}
+
+.border-1{
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
