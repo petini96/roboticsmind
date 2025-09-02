@@ -7,6 +7,30 @@
       </q-btn-group>
     </div>
 
+    <q-dialog v-model="showCommandInput" persistent>
+      <div class="command-dialog-card">
+        <div class="terminal-header row items-center no-wrap">
+          <div class="row q-gutter-xs">
+            <div class="header-dot red-dot"></div>
+            <div class="header-dot yellow-dot"></div>
+            <div class="header-dot green-dot"></div>
+          </div>
+          <div class="header-title col text-center text-grey-7">
+            -- Mudar Personalidade --
+          </div>
+        </div>
+        <div class="command-dialog-body">
+          <label for="command-input" class="text-accent q-mb-sm block">&gt; Digite o código secreto:</label>
+          <q-input dark dense standout="bg-dark" input-class="text-accent" id="command-input" autofocus v-model="command"
+            @keydown.enter="processCommand" />
+        </div>
+        <div class="command-dialog-actions row justify-end q-gutter-sm">
+          <q-btn flat label="Cancelar" class="dialog-button" v-close-popup @click="command = ''" />
+          <q-btn flat label="Ativar" class="dialog-button active" @click="processCommand" />
+        </div>
+      </div>
+    </q-dialog>
+
     <header class="hero-section column items-center text-center">
       <div class="terminal-prompt-title">
         <span class="prompt-symbol text-accent">&gt;</span>
@@ -16,13 +40,13 @@
         </h1>
       </div>
       <p class="text-subtitle1 text-grey-6 q-mt-md subtitle">
-        // Explorando a Inovação, Um Projeto de Cada Vez.
+        // {{ currentTexts.subtitle }}
       </p>
     </header>
 
     <main class="projects-section full-width">
       <div class="row items-stretch q-gutter-lg justify-center">
-        <div v-for="project in projects" :key="project.title" class="project-card"
+        <div v-for="(project, index) in projects" :key="project.icon" class="project-card"
           :style="{ '--project-accent-color': project.accentColor[currentTheme] || project.accentColor.default }"
           @click="openLink(project.link)">
           <div class="card-content">
@@ -33,17 +57,17 @@
                 <div class="header-dot green-dot"></div>
               </div>
               <div class="header-title col text-center text-grey-7">
-                -- {{ project.title }} --
+                -- {{ currentTexts.projects[index]?.title }} --
               </div>
               <div :class="['status-badge', `status-${project.status.toLowerCase().replace(/ /g, '-')}`]">
-                {{ project.status }}
+                {{ getStatusText(project.status) }}
               </div>
             </div>
 
             <div class="terminal-body column justify-center text-center">
               <q-icon :name="project.icon" class="text-project-accent" size="48px" />
               <div class="text-subtitle1 q-mt-md text-grey-4 card-description">
-                {{ project.description }}
+                {{ currentTexts.projects[index]?.description }}
               </div>
               <div class="tech-badges-container q-mt-md">
                 <span v-for="tech in project.technologies" :key="tech" class="tech-badge">
@@ -53,7 +77,7 @@
             </div>
 
             <div class="terminal-footer">
-              <span class="footer-command text-project-accent">access_project</span>
+              <span class="footer-command text-project-accent">{{ currentTexts.footerCommand }}</span>
               <q-icon name="arrow_forward" class="text-project-accent footer-arrow" size="20px" />
             </div>
           </div>
@@ -63,7 +87,7 @@
 
     <q-footer class="bg-transparent text-center q-pa-md">
       <div class="text-grey-7 q-mt-md footer-text">
-        System Status: <span class="text-green-4">Online</span> | © {{ new Date().getFullYear() }}
+        {{ currentTexts.footerStatus }} <span class="text-green-4">Online</span> | © {{ new Date().getFullYear() }}
         <q-btn flat round dense color="grey-7" icon="mdi-github" type="a" href="https://github.com/SeuUsuario"
           target="_blank" aria-label="GitHub" />
       </div>
@@ -72,163 +96,159 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 
-// --- LÓGICA DE TEMA (NOVA ABORDAGEM) ---
-
+// --- LÓGICA DE TEMA ---
 type ThemeName = 'cyber_terminal' | 'retro_futurista' | 'bio_hacker';
-
-// Mapeamento das variáveis CSS para cada tema
 const themeVariables: Record<ThemeName, Record<string, string>> = {
-  cyber_terminal: {
-    '--accent-color': '#00f0ff',
-    '--bg-color': '#010409',
-    '--card-bg-color': '#0d1117',
-    '--header-bg-color': '#161b22',
-    '--header-bg-color-hover': '#1c222b',
-    '--border-color': '#30363d',
-    '--text-color': '#c9d1d9',
-    '--text-grey-color': '#8b949e',
-    '--text-shadow-color': 'rgba(0, 240, 255, 0.7)',
-    '--scrollbar-border-radius': '20px',
-  },
-  retro_futurista: {
-    '--accent-color': '#ff7e00',
-    '--bg-color': '#1a0530',
-    '--card-bg-color': '#2c0b4d',
-    '--header-bg-color': '#3a1066',
-    '--header-bg-color-hover': '#431275',
-    '--border-color': '#5c2a9d',
-    '--text-color': '#e6e6e6',
-    '--text-grey-color': '#a9a9a9',
-    '--text-shadow-color': 'rgba(255, 126, 0, 0.6)',
-    '--scrollbar-border-radius': '0px',
-  },
-  bio_hacker: {
-    '--accent-color': '#39ff14',
-    '--bg-color': '#050a05',
-    '--card-bg-color': '#0a140a',
-    '--header-bg-color': '#0f1f0f',
-    '--header-bg-color-hover': '#132813',
-    '--border-color': '#1a3b1a',
-    '--text-color': '#c0ffc0',
-    '--text-grey-color': '#8fbc8f',
-    '--text-shadow-color': 'rgba(57, 255, 20, 0.5)',
-    '--scrollbar-border-radius': '2px',
-  }
+  cyber_terminal: { '--accent-color': '#00f0ff', '--bg-color': '#010409', '--card-bg-color': '#0d1117', '--header-bg-color': '#161b22', '--header-bg-color-hover': '#1c222b', '--border-color': '#30363d', '--text-color': '#c9d1d9', '--text-grey-color': '#8b949e', '--text-shadow-color': 'rgba(0, 240, 255, 0.7)', '--scrollbar-border-radius': '20px', },
+  retro_futurista: { '--accent-color': '#ff7e00', '--bg-color': '#1a0530', '--card-bg-color': '#2c0b4d', '--header-bg-color': '#3a1066', '--header-bg-color-hover': '#431275', '--border-color': '#5c2a9d', '--text-color': '#e6e6e6', '--text-grey-color': '#a9a9a9', '--text-shadow-color': 'rgba(255, 126, 0, 0.6)', '--scrollbar-border-radius': '0px', },
+  bio_hacker: { '--accent-color': '#39ff14', '--bg-color': '#050a05', '--card-bg-color': '#0a140a', '--header-bg-color': '#0f1f0f', '--header-bg-color-hover': '#132813', '--border-color': '#1a3b1a', '--text-color': '#c0ffc0', '--text-grey-color': '#8fbc8f', '--text-shadow-color': 'rgba(57, 255, 20, 0.5)', '--scrollbar-border-radius': '2px', }
 };
-
 const currentTheme = ref<ThemeName>('cyber_terminal');
-
-// Watcher que aplica as variáveis CSS na raiz (<html>) do documento
 watch(currentTheme, (themeName) => {
   const variables = themeVariables[themeName];
   for (const key in variables) {
     document.documentElement.style.setProperty(key, variables[key] ?? '');
   }
   localStorage.setItem('portfolio-theme', themeName);
-}, { immediate: true }); // `immediate: true` garante que rode na inicialização
+}, { immediate: true });
+const setTheme = (themeName: ThemeName) => { currentTheme.value = themeName; };
+interface Theme { name: ThemeName; label: string; }
+const themes = ref<Theme[]>([ { name: 'cyber_terminal', label: 'Cyberpunk' }, { name: 'retro_futurista', label: 'Retrô' }, { name: 'bio_hacker', label: 'Hacker' }, ]);
+// --- FIM DA LÓGICA DE TEMA ---
 
-const setTheme = (themeName: ThemeName) => {
-  currentTheme.value = themeName;
+// --- LÓGICA DE PERSONALIDADE ---
+type Personality = 'padrão' | 'playboy' | 'asno' | 'antigo' | 'adultos';
+const showCommandInput = ref(false);
+const command = ref('');
+const currentPersonality = ref<Personality>('padrão');
+
+const personalities = {
+  padrão: {
+    subtitle: 'Explorando a Inovação, Um Projeto de Cada Vez.',
+    statusOnline: 'Online', statusDev: 'Em Desenvolvimento', statusSoon: 'Em Breve',
+    footerCommand: 'access_project', footerStatus: 'System Status:',
+    projects: [
+      { title: 'Plataforma de Votação A/B', description: 'Plataforma interativa para criar enquetes A/B, coletar votos do público e visualizar estatísticas em tempo real.' },
+      { title: 'Doce Sabor Digital (SaaS)', description: 'Solução SaaS completa para confeitarias criarem e personalizarem suas lojas virtuais, com gestão de produtos e pedidos.' },
+      { title: 'YouTube Playlist Downloader', description: 'Ferramenta para converter playlists completas do YouTube para MP3 com um clique. Ideal para ouvir suas músicas offline.' },
+      { title: 'DevBox: Caixa de Ferramentas', description: 'Centralize credenciais, armazene comandos úteis e organize documentações. Uma maleta digital para otimizar seu workflow.' },
+    ]
+  },
+  playboy: {
+    subtitle: 'Alavancando Sinergias, Um Venture de Cada Vez.',
+    statusOnline: 'Operacional', statusDev: 'Em Prospecção', statusSoon: 'Próximo Quarter',
+    footerCommand: 'acquire_asset', footerStatus: 'Market Status:',
+    projects: [
+      { title: 'Consultoria de Decisões A/B', description: 'Plataforma de B.I. para a tomada de decisões estratégicas, otimizando o C.A.C. e o L.T.V. do seu público-alvo.' },
+      { title: 'E-commerce Verticalizado (SaaS)', description: 'Solução B2B white-label para o nicho de alta gastronomia, com foco em escalabilidade e market share.' },
+      { title: 'Otimizador de Mídia Pessoal', description: 'Ferramenta de curadoria e download de conteúdo para consumo em networking e deslocamentos aéreos.' },
+      { title: 'Dashboard de Ativos Digitais', description: 'Centralize seus N.F.T.s, tokens, e acessos a plataformas de investimento. Otimize seu portfólio digital.' },
+    ]
+  },
+  asno: {
+    subtitle: 'Tentano Faze as Coisa, Uma de Cada Veis.',
+    statusOnline: 'Funcionano', statusDev: 'Faseno ainda', statusSoon: 'Logo Menos',
+    footerCommand: 'entra_no_negosso', footerStatus: 'Situação do Saite:',
+    projects: [
+      { title: 'Qual se prefere?', description: 'Um saite pra vota qual coisa é mais mió que a otra. Agente mostra o resultado pra todo mundo ve.' },
+      { title: 'Loja de Doci (SaaS)', description: 'Fassa sua loja na internete, bote seus produtu e comesse a vende. É facio de mecher.' },
+      { title: 'Baxador de Musica do Iutubi', description: 'Pega as musica que se gosta no iutubi e Baxa tudo de uma veis só para ovi no selular.' },
+      { title: 'Ajuda para o Trabaio', description: 'Guarda suas senha, seus documento, os comando. Fica tudo junto para nao perde as coisa.' },
+    ]
+  },
+  antigo: {
+    subtitle: 'Desbravando Novas Fronteiras, Uma Empreitada de Cada Vez.',
+    statusOnline: 'Em Pleno Vapor', statusDev: 'Em Gênese', statusSoon: 'Em Breve Anunciado',
+    footerCommand: 'acessar_artefato', footerStatus: 'Condição do Sistema:',
+    projects: [
+      { title: 'Palco de Escrutínio A/B', description: 'Um dispositivo digital para que vossas mercês possam apresentar duas alternativas e o povo decida a mais preferível.' },
+      { title: 'Empório de Iguarias (SaaS)', description: 'Plataforma para que nobres confeiteiros possam estabelecer seus comércios e vender suas finas iguarias pela grande rede.' },
+      { title: 'Conversor de Melodias', description: 'Engenho que transmuta as listas de canções do YouTube em arquivos sonoros para a apreciação de vossa senhoria.' },
+      { title: 'Arca de Ferramentas', description: 'Um baú digital para guardar vossas credenciais, decretos e alfarrábios, otimizando assim os vossos afazeres.' },
+    ]
+  },
+  adultos: {
+    subtitle: 'Fazendo umas porra aí, um projeto merda de cada vez.',
+    statusOnline: 'Essa Bosta Tá no Ar', statusDev: 'Enrolando pra Caralho', statusSoon: 'Sei Lá, Porra',
+    footerCommand: 'entra_nessa_merda', footerStatus: 'Status dessa Bagaça:',
+    projects: [
+      { title: 'Que Porra Cê Prefere?', description: 'Um site idiota pra tu escolher entre duas merdas. Dane-se a média, só vota nessa porra.' },
+      { title: 'Vendinha de Bolo (SaaS)', description: 'Cansado de vender bolo no pote? Bota tua confeitaria de merda online e para de encher o saco.' },
+      { title: 'Pirateador de Música', description: 'Baixa a playlist do YouTube que tu quiser, caralho. De graça, foda-se o sistema.' },
+      { title: 'Caixa de Gambiarra', description: 'Anota tuas senhas e comandos de nerdola aqui. Para de ser um fudido desorganizado.' },
+    ]
+  }
 };
 
-// --- RESTANTE DO SCRIPT ---
+const currentTexts = computed(() => personalities[currentPersonality.value]);
 
-interface Theme {
-  name: ThemeName;
-  label: string;
+const getStatusText = (status: 'Online' | 'Em Desenvolvimento' | 'Em Breve') => {
+  const map = {
+    'Online': currentTexts.value.statusOnline,
+    'Em Desenvolvimento': currentTexts.value.statusDev,
+    'Em Breve': currentTexts.value.statusSoon
+  };
+  return map[status] || status;
 }
 
-const themes = ref<Theme[]>([
-  { name: 'cyber_terminal', label: 'Cyberpunk' },
-  { name: 'retro_futurista', label: 'Retrô' },
-  { name: 'bio_hacker', label: 'Hacker' },
-]);
+const processCommand = () => {
+  const code = command.value.toLowerCase().trim();
+  if (['padrão', 'playboy', 'asno', 'antigo', 'adultos'].includes(code)) {
+    currentPersonality.value = code as Personality;
+  }
+  showCommandInput.value = false;
+  command.value = '';
+};
 
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.ctrlKey && event.key === 'r') {
+    event.preventDefault();
+    showCommandInput.value = true;
+  }
+};
+// --- FIM DA LÓGICA DE PERSONALIDADE ---
+
+// --- DADOS ESTÁTICOS DOS PROJETOS (SEM TEXTOS DINÂMICOS) ---
 interface Project {
   icon: string;
-  title: string;
-  description: string;
   link: string;
   status: 'Online' | 'Em Desenvolvimento' | 'Em Breve';
   accentColor: { [key in ThemeName | 'default']: string };
   technologies: string[];
 }
 
-const typedTextEl = ref<HTMLElement | null>(null);
+const projects = ref<Project[]>([
+    { icon: 'mdi-vote-outline', link: 'https://choices.roboticsmind.com.br', status: 'Online', accentColor: { default: '#00f0ff', cyber_terminal: '#00f0ff', retro_futurista: '#ff7e00', bio_hacker: '#39ff14' }, technologies: ['Vue.js', 'Quasar', 'Node.js', 'PostgreSQL'], },
+    { icon: 'mdi-store-cog-outline', link: '#', status: 'Em Desenvolvimento', accentColor: { default: '#ffa500', cyber_terminal: '#ffa500', retro_futurista: '#f92a82', bio_hacker: '#4caf50' }, technologies: ['Java 17', 'Spring Boot', 'Vue.js', 'Docker', 'AWS'], },
+    { icon: 'mdi-youtube', link: '#', status: 'Em Breve', accentColor: { default: '#39ff14', cyber_terminal: '#39ff14', retro_futurista: '#ffd900', bio_hacker: '#8bc34a' }, technologies: ['Python', 'FastAPI', 'Vue.js', 'yt-dlp'], },
+    { icon: 'mdi-toolbox-outline', link: '#', status: 'Em Desenvolvimento', accentColor: { default: '#8a2be2', cyber_terminal: '#8a2be2', retro_futurista: '#00c2cb', bio_hacker: '#a1ff00' }, technologies: ['Vue.js', 'TypeScript', 'Pinia', 'Electron'], },
+]);
+// --- FIM DOS DADOS ESTÁTICOS ---
 
-const typeWriter = (element: HTMLElement, text: string, speed: number) => {
-  let i = 0;
-  element.innerHTML = '';
-  function type() {
-    if (i < text.length) {
-      element.innerHTML += text.charAt(i);
-      i++;
-      setTimeout(type, speed);
-    }
-  }
-  type();
-};
+
+const typedTextEl = ref<HTMLElement | null>(null);
+const typeWriter = (element: HTMLElement, text: string, speed: number) => { let i = 0; element.innerHTML = ''; function type() { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } } type(); };
+const openLink = (link: string) => { if (link && link !== '#') { window.open(link, '_blank'); } };
 
 onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
   const savedTheme = localStorage.getItem('portfolio-theme');
-  if (savedTheme && themes.value.some(t => t.name === savedTheme)) {
-    currentTheme.value = savedTheme as ThemeName;
-  }
-  if (typedTextEl.value) {
-    typeWriter(typedTextEl.value, 'Roboticsmind', 150);
-  }
+  if (savedTheme && themes.value.some(t => t.name === savedTheme)) { currentTheme.value = savedTheme as ThemeName; }
+  if (typedTextEl.value) { typeWriter(typedTextEl.value, 'Roboticsmind', 150); }
 });
 
-const openLink = (link: string) => {
-  if (link && link !== '#') {
-    window.open(link, '_blank');
-  }
-};
-
-const projects = ref<Project[]>([
-    {
-    icon: 'mdi-vote-outline',
-    title: 'Plataforma de Votação A/B',
-    description: 'Plataforma interativa para criar enquetes A/B, coletar votos do público e visualizar estatísticas em tempo real.',
-    link: 'https://choices.roboticsmind.com.br',
-    status: 'Online',
-    accentColor: { default: '#00f0ff', cyber_terminal: '#00f0ff', retro_futurista: '#ff7e00', bio_hacker: '#39ff14' },
-    technologies: ['Vue.js', 'Quasar', 'Node.js', 'PostgreSQL'],
-  },
-  {
-    icon: 'mdi-store-cog-outline',
-    title: 'Doce Sabor Digital (SaaS)',
-    description: 'Solução SaaS completa para confeitarias criarem e personalizarem suas lojas virtuais, com gestão de produtos e pedidos.',
-    link: '#',
-    status: 'Em Desenvolvimento',
-    accentColor: { default: '#ffa500', cyber_terminal: '#ffa500', retro_futurista: '#f92a82', bio_hacker: '#4caf50' },
-    technologies: ['Java 17', 'Spring Boot', 'Vue.js', 'Docker', 'AWS'],
-  },
-  {
-    icon: 'mdi-youtube',
-    title: 'YouTube Playlist Downloader',
-    description: 'Ferramenta para converter playlists completas do YouTube para MP3 com um clique. Ideal para ouvir suas músicas offline.',
-    link: '#',
-    status: 'Em Breve',
-    accentColor: { default: '#39ff14', cyber_terminal: '#39ff14', retro_futurista: '#ffd900', bio_hacker: '#8bc34a' },
-    technologies: ['Python', 'FastAPI', 'Vue.js', 'yt-dlp'],
-  },
-  {
-    icon: 'mdi-toolbox-outline',
-    title: 'DevBox: Caixa de Ferramentas',
-    description: 'Centralize credenciais, armazene comandos úteis e organize documentações. Uma maleta digital para otimizar seu workflow.',
-    link: '#',
-    status: 'Em Desenvolvimento',
-    accentColor: { default: '#8a2be2', cyber_terminal: '#8a2be2', retro_futurista: '#00c2cb', bio_hacker: '#a1ff00' },
-    technologies: ['Vue.js', 'TypeScript', 'Pinia', 'Electron'],
-  },
-]);
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <style lang="scss">
-/* ESTILOS GLOBAIS - AGORA FUNCIONAM COM AS VARIÁVEIS DO JS */
+.q-dialog__backdrop {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.6);
+}
 :root {
   scrollbar-width: thin;
   scrollbar-color: var(--accent-color) var(--bg-color);
@@ -249,7 +269,6 @@ const projects = ref<Project[]>([
 <style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&family=Courier+Prime:wght@400;700&display=swap');
 
-/* ANIMAÇÕES */
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes background-pan { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 @keyframes rotate-border { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -258,7 +277,37 @@ const projects = ref<Project[]>([
   75% { transform: translate(2px, 2px); } 100% { transform: translate(0, 0); }
 }
 
-/* ESTILOS DO COMPONENTE - Usam as variáveis globais */
+.command-dialog-card {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-border-radius);
+  color: var(--text-color);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  font-family: var(--font-family);
+  overflow: hidden;
+}
+.command-dialog-body {
+  padding: 16px;
+}
+.command-dialog-actions {
+  padding: 8px 16px 16px;
+  background-color: var(--header-bg-color);
+  border-top: 1px solid var(--border-color);
+}
+.dialog-button {
+  font-family: var(--font-family);
+  color: var(--text-grey-color);
+  &.active {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+}
+:deep(.q-field--standout .q-field__control) {
+  background-color: rgba(0,0,0,0.2);
+}
+
 .page-container {
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -266,7 +315,6 @@ const projects = ref<Project[]>([
   font-family: var(--font-family);
   animation: background-pan 30s linear infinite;
 
-  // Propriedades específicas de cada tema que não são cores
   &.theme-cyber_terminal {
     --font-family: 'JetBrains Mono', monospace;
     --font-size-description: 1rem;
