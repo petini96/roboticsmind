@@ -6,3 +6,11 @@ declare namespace NodeJS {
     BACKEND_URL: string
   }
 }
+
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $t: (key: string) => string
+  }
+}
+
+export {}

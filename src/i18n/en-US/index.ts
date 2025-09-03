@@ -1,0 +1,78 @@
+// Language: English
+export default {
+  // General UI
+  footerCommand: 'access_project',
+  footerStatus: 'System Status:',
+  secretCodePrompt: '> Enter the secret code:',
+  changePersonalityTitle: '-- Change Personality --',
+
+  // Default Personality
+  padrao_subtitle: 'Exploring Innovation, One Project at a Time.',
+  padrao_statusOnline: 'Online',
+  padrao_statusDev: 'In Development',
+  padrao_statusSoon: 'Coming Soon',
+  padrao_project1_title: 'A/B Voting Platform',
+  padrao_project1_desc: 'Interactive platform to create A/B polls, collect public votes, and view real-time statistics.',
+  padrao_project2_title: 'Digital Sweet Taste (SaaS)',
+  padrao_project2_desc: 'Complete SaaS solution for pastry shops to create and customize their online stores, with product and order management.',
+  padrao_project3_title: 'YouTube Playlist Downloader',
+  padrao_project3_desc: 'A tool to convert full YouTube playlists to MP3 with one click. Ideal for listening to your music offline.',
+  padrao_project4_title: 'DevBox: Toolbox',
+  padrao_project4_desc: 'Centralize credentials, store useful commands, and organize documentation. A digital briefcase for your workflow.',
+
+  // Playboy Personality
+  playboy_subtitle: 'Leveraging Synergies, One Venture at a Time.',
+  playboy_statusOnline: 'Operational',
+  playboy_statusDev: 'In Prospecting',
+  playboy_statusSoon: 'Next Quarter',
+  playboy_project1_title: 'A/B Decision Consulting',
+  playboy_project1_desc: 'A B.I. platform for strategic decision-making, optimizing the C.A.C. and L.T.V. of your target audience.',
+  playboy_project2_title: 'Verticalized E-commerce (SaaS)',
+  playboy_project2_desc: 'White-label B2B solution for the high-end gastronomy niche, focusing on scalability and market share.',
+  playboy_project3_title: 'Personal Media Optimizer',
+  playboy_project3_desc: 'Content curation and download tool for consumption during networking and air travel.',
+  playboy_project4_title: 'Digital Assets Dashboard',
+  playboy_project4_desc: 'Centralize your N.F.T.s, tokens, and access to investment platforms. Optimize your digital portfolio.',
+
+  // Asno (Dumb) Personality
+  asno_subtitle: 'Tryin to Do Stuf, One at a Tiem.',
+  asno_statusOnline: 'Workin',
+  asno_statusDev: 'Still Makin it',
+  asno_statusSoon: 'Soonish',
+  asno_project1_title: 'Which u prefer?',
+  asno_project1_desc: 'A saite to vote wich thing is beter than the othr. We show the result for evryone to see.',
+  asno_project2_title: 'Sweetz Shop (SaaS)',
+  asno_project2_desc: 'Make ur store on the interweb, put ur products and start sellin. Is eazy to use.',
+  asno_project3_title: 'Iutubi Music Downloader',
+  asno_project3_desc: 'Get the music u like on iutubi and Download it all at once to listen on ur fone.',
+  asno_project4_title: 'Help for Work',
+  asno_project4_desc: 'Save ur passwords, ur docs, the comands. Evrything together so u dont lose stuf.',
+
+  // Antigo (Old-fashioned) Personality
+  antigo_subtitle: 'Exploring New Frontiers, One Endeavor at a Time.',
+  antigo_statusOnline: 'In Full Swing',
+  antigo_statusDev: 'In Genesis',
+  antigo_statusSoon: 'To Be Announced Shortly',
+  antigo_project1_title: 'A/B Scrutiny Stage',
+  antigo_project1_desc: 'A digital device whereby your graces may present two alternatives, and the populace shall decide the most preferable.',
+  antigo_project2_title: 'Emporium of Delicacies (SaaS)',
+  antigo_project2_desc: 'A platform for noble confectioners to establish their trades and sell their fine delicacies across the great network.',
+  antigo_project3_title: 'Converter of Melodies',
+  antigo_project3_desc: 'An engine that transmutes YouTube song lists into sound files for your lordship\'s appreciation.',
+  antigo_project4_title: 'Chest of Tools',
+  antigo_project4_desc: 'A digital chest to store your credentials, decrees, and scrolls, thus optimizing your affairs.',
+
+  // Adultos (Adult) Personality
+  adultos_subtitle: 'Doing some shit, one shitty project at a time.',
+  adultos_statusOnline: 'This Crap Is Live',
+  adultos_statusDev: 'Procrastinating Like Hell',
+  adultos_statusSoon: 'Who The Fuck Knows',
+  adultos_project1_title: 'What The Fuck Do You Prefer?',
+  adultos_project1_desc: 'A stupid site for you to choose between two pieces of shit. Fuck the average, just vote on this damn thing.',
+  adultos_project2_title: 'Shitty Cake Shop (SaaS)',
+  adultos_project2_desc: 'Tired of selling cake in a pot? Put your shitty pastry shop online and stop being a pain in the ass.',
+  adultos_project3_title: 'Music Pirater',
+  adultos_project3_desc: 'Download whatever fucking YouTube playlist you want. For free, fuck the system.',
+  adultos_project4_title: 'Box of Hacks',
+  adultos_project4_desc: 'Jot down your nerdy passwords and commands here. Stop being a disorganized fuck.',
+};

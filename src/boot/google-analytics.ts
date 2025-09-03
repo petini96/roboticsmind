@@ -1,16 +1,35 @@
 import { defineBoot } from '#q-app/wrappers';
 import { createGtag } from 'vue-gtag';
 
-const ANALYTICS_GTAG = `${process.env.ANALYTICS_GTAG}`;
-const ANALYTICS_APP_NAME = `${process.env.ANALYTICS_APP_NAME}`;
+type GtagFunction = (command: 'event', action: string, params?: any) => void;
 
-export default defineBoot(({ app }) => {
-  console.log(`ANALYTICS_GTAG: ${ANALYTICS_GTAG}`);
-  console.log(`ANALYTICS_APP_NAME: ${ANALYTICS_APP_NAME}`);
-  const gtag = createGtag({
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $gtag: GtagFunction;
+  }
+}
+
+const ANALYTICS_GTAG = `${process.env.ANALYTICS_GTAG}`;
+
+export default defineBoot(({ app, router }) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  if (!ANALYTICS_GTAG || ANALYTICS_GTAG === 'undefined' || ANALYTICS_GTAG === '') {
+    console.warn('Google Analytics GTAG ID não está definida no arquivo .env');
+    return;
+  }
+
+  app.use(createGtag({
     tagId: ANALYTICS_GTAG,
-    appName: ANALYTICS_APP_NAME,
+  }));
+
+  // CORREÇÃO ESLINT: Removido o "(router as Router)"
+  router.afterEach((to) => {
+    app.config.globalProperties.$gtag('event', 'page_view', {
+      page_path: to.fullPath,
+      page_title: document.title,
+      page_location: window.location.href,
+    });
   });
-  
-  app.config.globalProperties.$gtag = gtag;
 });

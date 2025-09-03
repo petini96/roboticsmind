@@ -146,6 +146,8 @@ createQuasarApp(createApp, quasarUserOptions)
 
     return Promise[ method ]([
       
+      import('boot/i18n'),
+      
       import('boot/google-analytics')
       
     ]).then(bootFiles => {

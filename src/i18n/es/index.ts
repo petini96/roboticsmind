@@ -1,0 +1,78 @@
+// Idioma: Español
+export default {
+  // UI General
+  footerCommand: 'acceder_al_proyecto',
+  footerStatus: 'Estado del Sistema:',
+  secretCodePrompt: '> Introduce el código secreto:',
+  changePersonalityTitle: '-- Cambiar Personalidad --',
+
+  // Personalidad Estándar
+  padrao_subtitle: 'Explorando la Innovación, Un Proyecto a la Vez.',
+  padrao_statusOnline: 'En Línea',
+  padrao_statusDev: 'En Desarrollo',
+  padrao_statusSoon: 'Próximamente',
+  padrao_project1_title: 'Plataforma de Votación A/B',
+  padrao_project1_desc: 'Plataforma interactiva para crear encuestas A/B, recoger votos del público y ver estadísticas en tiempo real.',
+  padrao_project2_title: 'Sabor Dulce Digital (SaaS)',
+  padrao_project2_desc: 'Solución SaaS completa para que las pastelerías creen y personalicen sus tiendas virtuales, con gestión de productos y pedidos.',
+  padrao_project3_title: 'Descargador de Playlists de YouTube',
+  padrao_project3_desc: 'Herramienta para convertir listas de reproducción completas de YouTube a MP3 con un solo clic. Ideal para escuchar tu música sin conexión.',
+  padrao_project4_title: 'DevBox: Caja de Herramientas',
+  padrao_project4_desc: 'Centraliza credenciales, guarda comandos útiles y organiza documentación. Un maletín digital para tu flujo de trabajo.',
+
+  // Personalidad Playboy
+  playboy_subtitle: 'Aprovechando Sinergias, Una Empresa a la Vez.',
+  playboy_statusOnline: 'Operativo',
+  playboy_statusDev: 'En Prospección',
+  playboy_statusSoon: 'Próximo Trimestre',
+  playboy_project1_title: 'Consultoría de Decisiones A/B',
+  playboy_project1_desc: 'Plataforma de B.I. para la toma de decisiones estratégicas, optimizando el C.A.C. y el L.T.V. de tu público objetivo.',
+  playboy_project2_title: 'E-commerce Verticalizado (SaaS)',
+  playboy_project2_desc: 'Solución B2B de marca blanca para el nicho de la alta gastronomía, centrada en la escalabilidad y la cuota de mercado.',
+  playboy_project3_title: 'Optimizador de Medios Personales',
+  playboy_project3_desc: 'Herramienta de curación y descarga de contenidos para consumir durante el networking y los viajes aéreos.',
+  playboy_project4_title: 'Dashboard de Activos Digitales',
+  playboy_project4_desc: 'Centraliza tus N.F.T.s, tokens y accesos a plataformas de inversión. Optimiza tu cartera digital.',
+
+  // Personalidad Asno (Tonto)
+  asno_subtitle: 'Intentando Aser Cosas, Una a la Ves.',
+  asno_statusOnline: 'Funcionando',
+  asno_statusDev: 'Aciéndolo todavía',
+  asno_statusSoon: 'En un Ratico',
+  asno_project1_title: '¿Cuál te gusta más?',
+  asno_project1_desc: 'Un sitio para votar qué cosa es más mejor que la otra. Mostramos el resultado pa que todos lo vean.',
+  asno_project2_title: 'Tienda de Dulses (SaaS)',
+  asno_project2_desc: 'Ase tu tienda en el interné, pon tus produtos y empiesa a vender. Es fásil de usar.',
+  asno_project3_title: 'Bajador de Música de Iutub',
+  asno_project3_desc: 'Toma la música que te gusta en iutub y Bájala toda de una ves para oírla en el selular.',
+  asno_project4_title: 'Ayuda para el Trabajo',
+  asno_project4_desc: 'Guarda tus claves, tus papeles, los comandos. Todo junto para no perder las cosas.',
+
+  // Personalidad Antiguo
+  antigo_subtitle: 'Explorando Nuevas Fronteras, Una Empresa a la Vez.',
+  antigo_statusOnline: 'A Pleno Rendimiento',
+  antigo_statusDev: 'En Génesis',
+  antigo_statusSoon: 'Próximamente Anunciado',
+  antigo_project1_title: 'Escenario de Escrutinio A/B',
+  antigo_project1_desc: 'Un dispositivo digital mediante el cual vuestras mercedes pueden presentar dos alternativas, y el pueblo decidirá la más preferible.',
+  antigo_project2_title: 'Emporio de Manjares (SaaS)',
+  antigo_project2_desc: 'Plataforma para que nobles reposteros establezcan sus comercios y vendan sus finos manjares a través de la gran red.',
+  antigo_project3_title: 'Convertidor de Melodías',
+  antigo_project3_desc: 'Un ingenio que transmuta las listas de canciones de YouTube en archivos sonoros para el deleite de vuestra señoría.',
+  antigo_project4_title: 'Arca de Herramientas',
+  antigo_project4_desc: 'Un cofre digital para guardar vuestras credenciales, decretos y pergaminos, optimizando así vuestros quehaceres.',
+
+  // Personalidad Adultos
+  adultos_subtitle: 'Haciendo mierdas, un puto proyecto a la vez.',
+  adultos_statusOnline: 'Esta Mierda Está en Vivo',
+  adultos_statusDev: 'Haciéndome el Pendejo',
+  adultos_statusSoon: 'Quién Coño Sabe',
+  adultos_project1_title: '¿Qué Coño Prefieres?',
+  adultos_project1_desc: 'Un sitio estúpido para que elijas entre dos mierdas. A la verga con el promedio, solo vota en esta chingadera.',
+  adultos_project2_title: 'Tiendita de Pasteles (SaaS)',
+  adultos_project2_desc: '¿Cansado de vender pasteles en un frasco? Pon tu puta pastelería en línea y deja de joder.',
+  adultos_project3_title: 'Pirateador de Música',
+  adultos_project3_desc: 'Descarga la puta lista de reproducción de YouTube que quieras, carajo. Gratis, que se joda el sistema.',
+  adultos_project4_title: 'Caja de Chapuzas',
+  adultos_project4_desc: 'Apunta aquí tus contraseñas y comandos de friki. Deja de ser un jodido desorganizado.',
+};

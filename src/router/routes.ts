@@ -2,21 +2,18 @@ import type { RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: "/",
+    // O :lang? torna o parâmetro de idioma opcional
+    path: "/:lang(pt|en|es)?", // Restringe os idiomas aceitos
     component: () => import("layouts/home/HomeLayout.vue"),
     children: [
       {
-        path: "",
+        path: "", // O caminho vazio herda o /:lang
         name: "home",
-        children: [
-          {
-            path: "",
-            name: "home-page",
-            component: () => import("pages/HomePage.vue"),
-            meta: { requiresAuth: false },
-          }
-        ]
-      }
+        component: () => import("pages/HomePage.vue"),
+        meta: { requiresAuth: false },
+      },
+      // Se tiver outras páginas, adicione-as aqui
+      // Ex: { path: "sobre", name: "about", component: ... }
     ],
   },
 

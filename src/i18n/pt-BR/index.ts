@@ -1,0 +1,78 @@
+// Língua: Português do Brasil
+export default {
+  // UI Geral
+  footerCommand: 'acessar_projeto',
+  footerStatus: 'Status do Sistema:',
+  secretCodePrompt: '> Digite o código secreto:',
+  changePersonalityTitle: '-- Mudar Personalidade --',
+
+  // Personalidade Padrão
+  padrao_subtitle: 'Explorando a Inovação, Um Projeto de Cada Vez.',
+  padrao_statusOnline: 'Online',
+  padrao_statusDev: 'Em Desenvolvimento',
+  padrao_statusSoon: 'Em Breve',
+  padrao_project1_title: 'Plataforma de Votação A/B',
+  padrao_project1_desc: 'Plataforma interativa para criar enquetes A/B, coletar votos e visualizar estatísticas em tempo real.',
+  padrao_project2_title: 'Doce Sabor Digital (SaaS)',
+  padrao_project2_desc: 'Solução SaaS para confeitarias criarem suas lojas virtuais, com gestão de produtos e pedidos.',
+  padrao_project3_title: 'YouTube Playlist Downloader',
+  padrao_project3_desc: 'Ferramenta para converter playlists do YouTube para MP3 com um clique. Ideal para ouvir suas músicas offline.',
+  padrao_project4_title: 'DevBox: Caixa de Ferramentas',
+  padrao_project4_desc: 'Centralize credenciais, armazene comandos úteis e organize documentações. Uma maleta digital para seu workflow.',
+
+  // Personalidade Playboy
+  playboy_subtitle: 'Alavancando Sinergias, Um Venture de Cada Vez.',
+  playboy_statusOnline: 'Operacional',
+  playboy_statusDev: 'Em Prospecção',
+  playboy_statusSoon: 'Próximo Quarter',
+  playboy_project1_title: 'Consultoria de Decisões A/B',
+  playboy_project1_desc: 'Plataforma de B.I. para a tomada de decisões estratégicas, otimizando o C.A.C. e o L.T.V. do seu público-alvo.',
+  playboy_project2_title: 'E-commerce Verticalizado (SaaS)',
+  playboy_project2_desc: 'Solução B2B white-label para o nicho de alta gastronomia, com foco em escalabilidade e market share.',
+  playboy_project3_title: 'Otimizador de Mídia Pessoal',
+  playboy_project3_desc: 'Ferramenta de curadoria e download de conteúdo para consumo em networking e deslocamentos aéreos.',
+  playboy_project4_title: 'Dashboard de Ativos Digitais',
+  playboy_project4_desc: 'Centralize seus N.F.T.s, tokens, e acessos a plataformas de investimento. Otimize seu portfólio digital.',
+
+  // Personalidade Asno
+  asno_subtitle: 'Tentano Faze as Coisa, Uma de Cada Veis.',
+  asno_statusOnline: 'Funcionano',
+  asno_statusDev: 'Faseno ainda',
+  asno_statusSoon: 'Logo Menos',
+  asno_project1_title: 'Qual se prefere?',
+  asno_project1_desc: 'Um saite pra vota qual coisa é mais mió que a otra. Agente mostra o resultado pra todo mundo ve.',
+  asno_project2_title: 'Loja de Doci (SaaS)',
+  asno_project2_desc: 'Fassa sua loja na internete, bote seus produtu e comesse a vende. É facio de mecher.',
+  asno_project3_title: 'Baxador de Musica do Iutubi',
+  asno_project3_desc: 'Pega as musica que se gosta no iutubi e Baxa tudo de uma veis só para ovi no selular.',
+  asno_project4_title: 'Ajuda para o Trabaio',
+  asno_project4_desc: 'Guarda suas senha, seus documento, os comando. Fica tudo junto para nao perde as coisa.',
+
+  // Personalidade Antigo
+  antigo_subtitle: 'Desbravando Novas Fronteiras, Uma Empreitada de Cada Vez.',
+  antigo_statusOnline: 'Em Pleno Vapor',
+  antigo_statusDev: 'Em Gênese',
+  antigo_statusSoon: 'Em Breve Anunciado',
+  antigo_project1_title: 'Palco de Escrutínio A/B',
+  antigo_project1_desc: 'Um dispositivo digital para que vossas mercês possam apresentar duas alternativas e o povo decida a mais preferível.',
+  antigo_project2_title: 'Empório de Iguarias (SaaS)',
+  antigo_project2_desc: 'Plataforma para que nobres confeiteiros possam estabelecer seus comércios e vender suas finas iguarias pela grande rede.',
+  antigo_project3_title: 'Conversor de Melodias',
+  antigo_project3_desc: 'Engenho que transmuta as listas de canções do YouTube em arquivos sonoros para a apreciação de vossa senhoria.',
+  antigo_project4_title: 'Arca de Ferramentas',
+  antigo_project4_desc: 'Um baú digital para guardar vossas credenciais, decretos e alfarrábios, otimizando assim os vossos afazeres.',
+
+  // Personalidade Adultos
+  adultos_subtitle: 'Fazendo umas porra aí, um projeto merda de cada vez.',
+  adultos_statusOnline: 'Essa Bosta Tá no Ar',
+  adultos_statusDev: 'Enrolando pra Caralho',
+  adultos_statusSoon: 'Sei Lá, Porra',
+  adultos_project1_title: 'Que Porra Cê Prefere?',
+  adultos_project1_desc: 'Um site idiota pra tu escolher entre duas merdas. Dane-se a média, só vota nessa porra.',
+  adultos_project2_title: 'Vendinha de Bolo (SaaS)',
+  adultos_project2_desc: 'Cansado de vender bolo no pote? Bota tua confeitaria de merda online e para de encher o saco.',
+  adultos_project3_title: 'Pirateador de Música',
+  adultos_project3_desc: 'Baixa a playlist do YouTube que tu quiser, caralho. De graça, foda-se o sistema.',
+  adultos_project4_title: 'Caixa de Gambiarra',
+  adultos_project4_desc: 'Anota tuas senhas e comandos de nerdola aqui. Para de ser um fudido desorganizado.',
+};

@@ -198,6 +198,27 @@
   resolved "https://registry.npmjs.org/@inquirer/figures/-/figures-1.0.10.tgz"
   integrity sha512-Ey6176gZmeqZuY/W/nZiUyvmb1/qInjcpiZjXWi6nON+nxJpD1bxtSoBxNliGISae32n6OwbY+TSXPZ1CfS4bw==
 
+"@intlify/core-base@11.1.11":
+  version "11.1.11"
+  resolved "https://registry.npmjs.org/@intlify/core-base/-/core-base-11.1.11.tgz"
+  integrity sha512-1Z0N8jTfkcD2Luq9HNZt+GmjpFe4/4PpZF3AOzoO1u5PTtSuXZcfhwBatywbfE2ieB/B5QHIoOFmCXY2jqVKEQ==
+  dependencies:
+    "@intlify/message-compiler" "11.1.11"
+    "@intlify/shared" "11.1.11"
+
+"@intlify/message-compiler@11.1.11":
+  version "11.1.11"
+  resolved "https://registry.npmjs.org/@intlify/message-compiler/-/message-compiler-11.1.11.tgz"
+  integrity sha512-7PC6neomoc/z7a8JRjPBbu0T2TzR2MQuY5kn2e049MP7+o32Ve7O8husylkA7K9fQRe4iNXZWTPnDJ6vZdtS1Q==
+  dependencies:
+    "@intlify/shared" "11.1.11"
+    source-map-js "^1.0.2"
+
+"@intlify/shared@11.1.11":
+  version "11.1.11"
+  resolved "https://registry.npmjs.org/@intlify/shared/-/shared-11.1.11.tgz"
+  integrity sha512-RIBFTIqxZSsxUqlcyoR7iiC632bq7kkOwYvZlvcVObHfrF4NhuKc4FKvu8iPCrEO+e3XsY7/UVpfgzg+M7ETzA==
+
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
   resolved "https://registry.npmjs.org/@isaacs/cliui/-/cliui-8.0.2.tgz"
@@ -701,7 +722,7 @@
     de-indent "^1.0.2"
     he "^1.2.0"
 
-"@vue/devtools-api@^6.0.0-beta.11", "@vue/devtools-api@^6.6.3", "@vue/devtools-api@^6.6.4":
+"@vue/devtools-api@^6.0.0-beta.11", "@vue/devtools-api@^6.5.0", "@vue/devtools-api@^6.6.3", "@vue/devtools-api@^6.6.4":
   version "6.6.4"
   resolved "https://registry.npmjs.org/@vue/devtools-api/-/devtools-api-6.6.4.tgz"
   integrity sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==
@@ -3447,7 +3468,7 @@ signal-exit@^4.0.1:
   resolved "https://registry.npmjs.org/signal-exit/-/signal-exit-4.1.0.tgz"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
 
-source-map-js@^1.2.0, source-map-js@^1.2.1:
+source-map-js@^1.0.2, source-map-js@^1.2.0, source-map-js@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz"
   integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
@@ -3877,6 +3898,15 @@ vue-gtag@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/vue-gtag/-/vue-gtag-3.0.0.tgz"
   integrity sha512-FS26JKNxoSBwR1J61afE9bP85YiwGpgiM35hxdguLtx4JigsQAXpjYJhV9No76kF1JKdnAq3EkL5ButpLVXarQ==
+
+vue-i18n@^11.1.11:
+  version "11.1.11"
+  resolved "https://registry.npmjs.org/vue-i18n/-/vue-i18n-11.1.11.tgz"
+  integrity sha512-LvyteQoXeQiuILbzqv13LbyBna/TEv2Ha+4ZWK2AwGHUzZ8+IBaZS0TJkCgn5izSPLcgZwXy9yyTrewCb2u/MA==
+  dependencies:
+    "@intlify/core-base" "11.1.11"
+    "@intlify/shared" "11.1.11"
+    "@vue/devtools-api" "^6.5.0"
 
 vue-router@^4.0.12, vue-router@^4.5.0:
   version "4.5.0"

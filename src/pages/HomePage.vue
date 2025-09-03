@@ -1,5 +1,17 @@
 <template>
   <q-page :class="['page-container', `theme-${currentTheme}`]" class="column items-center q-pa-md">
+    <div class="language-selector">
+      <q-btn-dropdown flat :label="currentLanguageLabel" icon="mdi-translate" class="theme-button">
+        <q-list dense dark class="selector-list">
+          <q-item v-for="lang in languages" :key="lang.code" clickable v-close-popup @click="changeLanguage(lang.code)">
+            <q-item-section>
+              <q-item-label>{{ lang.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
+    </div>
+
     <div class="theme-selector">
       <q-btn-group flat>
         <q-btn v-for="theme in themes" :key="theme.name" :label="theme.label" @click="setTheme(theme.name)"
@@ -16,11 +28,11 @@
             <div class="header-dot green-dot"></div>
           </div>
           <div class="header-title col text-center text-grey-7">
-            -- Mudar Personalidade --
+            {{ t('changePersonalityTitle') }}
           </div>
         </div>
         <div class="command-dialog-body">
-          <label for="command-input" class="text-accent q-mb-sm block">&gt; Digite o código secreto:</label>
+          <label for="command-input" class="text-accent q-mb-sm block">{{ t('secretCodePrompt') }}</label>
           <q-input dark dense standout="bg-dark" input-class="text-accent" id="command-input" autofocus v-model="command"
             @keydown.enter="processCommand" />
         </div>
@@ -40,7 +52,7 @@
         </h1>
       </div>
       <p class="text-subtitle1 text-grey-6 q-mt-md subtitle">
-        // {{ currentTexts.subtitle }}
+        // {{ t(`${currentPersonality}_subtitle`) }}
       </p>
     </header>
 
@@ -48,7 +60,7 @@
       <div class="row items-stretch q-gutter-lg justify-center">
         <div v-for="(project, index) in projects" :key="project.icon" class="project-card"
           :style="{ '--project-accent-color': project.accentColor[currentTheme] || project.accentColor.default }"
-          @click="openLink(project.link)">
+          @click="openLink(project, t(`${currentPersonality}_project${index + 1}_title`))">
           <div class="card-content">
             <div class="terminal-header row items-center no-wrap">
               <div class="row q-gutter-xs">
@@ -57,7 +69,7 @@
                 <div class="header-dot green-dot"></div>
               </div>
               <div class="header-title col text-center text-grey-7">
-                -- {{ currentTexts.projects[index]?.title }} --
+                -- {{ t(`${currentPersonality}_project${index + 1}_title`) }} --
               </div>
               <div :class="['status-badge', `status-${project.status.toLowerCase().replace(/ /g, '-')}`]">
                 {{ getStatusText(project.status) }}
@@ -67,7 +79,7 @@
             <div class="terminal-body column justify-center text-center">
               <q-icon :name="project.icon" class="text-project-accent" size="48px" />
               <div class="text-subtitle1 q-mt-md text-grey-4 card-description">
-                {{ currentTexts.projects[index]?.description }}
+                {{ t(`${currentPersonality}_project${index + 1}_desc`) }}
               </div>
               <div class="tech-badges-container q-mt-md">
                 <span v-for="tech in project.technologies" :key="tech" class="tech-badge">
@@ -77,7 +89,7 @@
             </div>
 
             <div class="terminal-footer">
-              <span class="footer-command text-project-accent">{{ currentTexts.footerCommand }}</span>
+              <span class="footer-command text-project-accent">{{ t('footerCommand') }}</span>
               <q-icon name="arrow_forward" class="text-project-accent footer-arrow" size="20px" />
             </div>
           </div>
@@ -87,8 +99,8 @@
 
     <q-footer class="bg-transparent text-center q-pa-md">
       <div class="text-grey-7 q-mt-md footer-text">
-        {{ currentTexts.footerStatus }} <span class="text-green-4">Online</span> | © {{ new Date().getFullYear() }}
-        <q-btn flat round dense color="grey-7" icon="mdi-github" type="a" href="https://github.com/SeuUsuario"
+        {{ t('footerStatus') }} <span class="text-green-4">{{ t(`${currentPersonality}_statusOnline`) }}</span> | © {{ new Date().getFullYear() }}
+        <q-btn flat round dense color="grey-7" icon="mdi-github" @click="trackSocialClick('GitHub')" type="a" href="https://github.com/SeuUsuario"
           target="_blank" aria-label="GitHub" />
       </div>
     </q-footer>
@@ -96,7 +108,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed, getCurrentInstance } from 'vue';
+import { useMeta } from 'quasar';
+import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
+
+// --- SETUP INICIAL ---
+const { t, locale } = useI18n();
+const route = useRoute();
+const router = useRouter();
+const app = getCurrentInstance();
+const gtag = app?.appContext.config.globalProperties.$gtag;
+
+// --- SEO COM HREFLANG ---
+const siteUrl = 'https://www.roboticsmind.com.br'; // SUBSTITUA COM SEU DOMÍNIO REAL
+useMeta(() => ({
+  link: {
+    portuguese: { rel: 'alternate', hreflang: 'pt-br', href: `${siteUrl}/pt` },
+    english: { rel: 'alternate', hreflang: 'en-us', href: `${siteUrl}/en` },
+    spanish: { rel: 'alternate', hreflang: 'es', href: `${siteUrl}/es` },
+    xDefault: { rel: 'alternate', hreflang: 'x-default', href: `${siteUrl}/pt` },
+  },
+  htmlAttr: {
+    lang: locale.value === 'pt-BR' ? 'pt-br' : (locale.value === 'en-US' ? 'en-us' : 'es'),
+  },
+}));
 
 // --- LÓGICA DE TEMA ---
 type ThemeName = 'cyber_terminal' | 'retro_futurista' | 'bio_hacker';
@@ -113,91 +149,45 @@ watch(currentTheme, (themeName) => {
   }
   localStorage.setItem('portfolio-theme', themeName);
 }, { immediate: true });
-const setTheme = (themeName: ThemeName) => { currentTheme.value = themeName; };
+
+const setTheme = (themeName: ThemeName) => {
+  currentTheme.value = themeName;
+  if (gtag) gtag('event', 'change_theme', { 'theme_name': themeName });
+};
 interface Theme { name: ThemeName; label: string; }
-const themes = ref<Theme[]>([ { name: 'cyber_terminal', label: 'Cyberpunk' }, { name: 'retro_futurista', label: 'Retrô' }, { name: 'bio_hacker', label: 'Hacker' }, ]);
-// --- FIM DA LÓGICA DE TEMA ---
+const themes = ref<Theme[]>([{ name: 'cyber_terminal', label: 'Cyberpunk' }, { name: 'retro_futurista', label: 'Retrô' }, { name: 'bio_hacker', label: 'Hacker' },]);
 
 // --- LÓGICA DE PERSONALIDADE ---
-type Personality = 'padrão' | 'playboy' | 'asno' | 'antigo' | 'adultos';
+type Personality = 'padrao' | 'playboy' | 'asno' | 'antigo' | 'adultos';
 const showCommandInput = ref(false);
 const command = ref('');
-const currentPersonality = ref<Personality>('padrão');
-
-const personalities = {
-  padrão: {
-    subtitle: 'Explorando a Inovação, Um Projeto de Cada Vez.',
-    statusOnline: 'Online', statusDev: 'Em Desenvolvimento', statusSoon: 'Em Breve',
-    footerCommand: 'access_project', footerStatus: 'System Status:',
-    projects: [
-      { title: 'Plataforma de Votação A/B', description: 'Plataforma interativa para criar enquetes A/B, coletar votos do público e visualizar estatísticas em tempo real.' },
-      { title: 'Doce Sabor Digital (SaaS)', description: 'Solução SaaS completa para confeitarias criarem e personalizarem suas lojas virtuais, com gestão de produtos e pedidos.' },
-      { title: 'YouTube Playlist Downloader', description: 'Ferramenta para converter playlists completas do YouTube para MP3 com um clique. Ideal para ouvir suas músicas offline.' },
-      { title: 'DevBox: Caixa de Ferramentas', description: 'Centralize credenciais, armazene comandos úteis e organize documentações. Uma maleta digital para otimizar seu workflow.' },
-    ]
-  },
-  playboy: {
-    subtitle: 'Alavancando Sinergias, Um Venture de Cada Vez.',
-    statusOnline: 'Operacional', statusDev: 'Em Prospecção', statusSoon: 'Próximo Quarter',
-    footerCommand: 'acquire_asset', footerStatus: 'Market Status:',
-    projects: [
-      { title: 'Consultoria de Decisões A/B', description: 'Plataforma de B.I. para a tomada de decisões estratégicas, otimizando o C.A.C. e o L.T.V. do seu público-alvo.' },
-      { title: 'E-commerce Verticalizado (SaaS)', description: 'Solução B2B white-label para o nicho de alta gastronomia, com foco em escalabilidade e market share.' },
-      { title: 'Otimizador de Mídia Pessoal', description: 'Ferramenta de curadoria e download de conteúdo para consumo em networking e deslocamentos aéreos.' },
-      { title: 'Dashboard de Ativos Digitais', description: 'Centralize seus N.F.T.s, tokens, e acessos a plataformas de investimento. Otimize seu portfólio digital.' },
-    ]
-  },
-  asno: {
-    subtitle: 'Tentano Faze as Coisa, Uma de Cada Veis.',
-    statusOnline: 'Funcionano', statusDev: 'Faseno ainda', statusSoon: 'Logo Menos',
-    footerCommand: 'entra_no_negosso', footerStatus: 'Situação do Saite:',
-    projects: [
-      { title: 'Qual se prefere?', description: 'Um saite pra vota qual coisa é mais mió que a otra. Agente mostra o resultado pra todo mundo ve.' },
-      { title: 'Loja de Doci (SaaS)', description: 'Fassa sua loja na internete, bote seus produtu e comesse a vende. É facio de mecher.' },
-      { title: 'Baxador de Musica do Iutubi', description: 'Pega as musica que se gosta no iutubi e Baxa tudo de uma veis só para ovi no selular.' },
-      { title: 'Ajuda para o Trabaio', description: 'Guarda suas senha, seus documento, os comando. Fica tudo junto para nao perde as coisa.' },
-    ]
-  },
-  antigo: {
-    subtitle: 'Desbravando Novas Fronteiras, Uma Empreitada de Cada Vez.',
-    statusOnline: 'Em Pleno Vapor', statusDev: 'Em Gênese', statusSoon: 'Em Breve Anunciado',
-    footerCommand: 'acessar_artefato', footerStatus: 'Condição do Sistema:',
-    projects: [
-      { title: 'Palco de Escrutínio A/B', description: 'Um dispositivo digital para que vossas mercês possam apresentar duas alternativas e o povo decida a mais preferível.' },
-      { title: 'Empório de Iguarias (SaaS)', description: 'Plataforma para que nobres confeiteiros possam estabelecer seus comércios e vender suas finas iguarias pela grande rede.' },
-      { title: 'Conversor de Melodias', description: 'Engenho que transmuta as listas de canções do YouTube em arquivos sonoros para a apreciação de vossa senhoria.' },
-      { title: 'Arca de Ferramentas', description: 'Um baú digital para guardar vossas credenciais, decretos e alfarrábios, otimizando assim os vossos afazeres.' },
-    ]
-  },
-  adultos: {
-    subtitle: 'Fazendo umas porra aí, um projeto merda de cada vez.',
-    statusOnline: 'Essa Bosta Tá no Ar', statusDev: 'Enrolando pra Caralho', statusSoon: 'Sei Lá, Porra',
-    footerCommand: 'entra_nessa_merda', footerStatus: 'Status dessa Bagaça:',
-    projects: [
-      { title: 'Que Porra Cê Prefere?', description: 'Um site idiota pra tu escolher entre duas merdas. Dane-se a média, só vota nessa porra.' },
-      { title: 'Vendinha de Bolo (SaaS)', description: 'Cansado de vender bolo no pote? Bota tua confeitaria de merda online e para de encher o saco.' },
-      { title: 'Pirateador de Música', description: 'Baixa a playlist do YouTube que tu quiser, caralho. De graça, foda-se o sistema.' },
-      { title: 'Caixa de Gambiarra', description: 'Anota tuas senhas e comandos de nerdola aqui. Para de ser um fudido desorganizado.' },
-    ]
-  }
-};
-
-const currentTexts = computed(() => personalities[currentPersonality.value]);
+const currentPersonality = ref<Personality>('padrao');
 
 const getStatusText = (status: 'Online' | 'Em Desenvolvimento' | 'Em Breve') => {
   const map = {
-    'Online': currentTexts.value.statusOnline,
-    'Em Desenvolvimento': currentTexts.value.statusDev,
-    'Em Breve': currentTexts.value.statusSoon
+    'Online': t(`${currentPersonality.value}_statusOnline`),
+    'Em Desenvolvimento': t(`${currentPersonality.value}_statusDev`),
+    'Em Breve': t(`${currentPersonality.value}_statusSoon`)
   };
   return map[status] || status;
 }
 
 const processCommand = () => {
   const code = command.value.toLowerCase().trim();
-  if (['padrão', 'playboy', 'asno', 'antigo', 'adultos'].includes(code)) {
-    currentPersonality.value = code as Personality;
+  const personalityMap: { [key: string]: Personality } = {
+    'padrão': 'padrao',
+    'padrao': 'padrao',
+    'playboy': 'playboy',
+    'asno': 'asno',
+    'antigo': 'antigo',
+    'adultos': 'adultos'
+  };
+
+  if (personalityMap[code]) {
+    currentPersonality.value = personalityMap[code];
+    if (gtag) gtag('event', 'change_personality', { 'personality_name': code });
   }
+
   showCommandInput.value = false;
   command.value = '';
 };
@@ -208,9 +198,8 @@ const handleKeyDown = (event: KeyboardEvent) => {
     showCommandInput.value = true;
   }
 };
-// --- FIM DA LÓGICA DE PERSONALIDADE ---
 
-// --- DADOS ESTÁTICOS DOS PROJETOS (SEM TEXTOS DINÂMICOS) ---
+// --- DADOS ESTÁTICOS DOS PROJETOS ---
 interface Project {
   icon: string;
   link: string;
@@ -218,25 +207,60 @@ interface Project {
   accentColor: { [key in ThemeName | 'default']: string };
   technologies: string[];
 }
-
 const projects = ref<Project[]>([
-    { icon: 'mdi-vote-outline', link: 'https://choices.roboticsmind.com.br', status: 'Online', accentColor: { default: '#00f0ff', cyber_terminal: '#00f0ff', retro_futurista: '#ff7e00', bio_hacker: '#39ff14' }, technologies: ['Vue.js', 'Quasar', 'Node.js', 'PostgreSQL'], },
-    { icon: 'mdi-store-cog-outline', link: '#', status: 'Em Desenvolvimento', accentColor: { default: '#ffa500', cyber_terminal: '#ffa500', retro_futurista: '#f92a82', bio_hacker: '#4caf50' }, technologies: ['Java 17', 'Spring Boot', 'Vue.js', 'Docker', 'AWS'], },
-    { icon: 'mdi-youtube', link: '#', status: 'Em Breve', accentColor: { default: '#39ff14', cyber_terminal: '#39ff14', retro_futurista: '#ffd900', bio_hacker: '#8bc34a' }, technologies: ['Python', 'FastAPI', 'Vue.js', 'yt-dlp'], },
-    { icon: 'mdi-toolbox-outline', link: '#', status: 'Em Desenvolvimento', accentColor: { default: '#8a2be2', cyber_terminal: '#8a2be2', retro_futurista: '#00c2cb', bio_hacker: '#a1ff00' }, technologies: ['Vue.js', 'TypeScript', 'Pinia', 'Electron'], },
+  { icon: 'mdi-vote-outline', link: 'https://choices.roboticsmind.com.br', status: 'Online', accentColor: { default: '#00f0ff', cyber_terminal: '#00f0ff', retro_futurista: '#ff7e00', bio_hacker: '#39ff14' }, technologies: ['Vue.js', 'Quasar', 'Node.js', 'PostgreSQL'], },
+  { icon: 'mdi-store-cog-outline', link: '#', status: 'Em Desenvolvimento', accentColor: { default: '#ffa500', cyber_terminal: '#ffa500', retro_futurista: '#f92a82', bio_hacker: '#4caf50' }, technologies: ['Java 17', 'Spring Boot', 'Vue.js', 'Docker', 'AWS'], },
+  { icon: 'mdi-youtube', link: '#', status: 'Em Breve', accentColor: { default: '#39ff14', cyber_terminal: '#39ff14', retro_futurista: '#ffd900', bio_hacker: '#8bc34a' }, technologies: ['Python', 'FastAPI', 'Vue.js', 'yt-dlp'], },
+  { icon: 'mdi-toolbox-outline', link: '#', status: 'Em Desenvolvimento', accentColor: { default: '#8a2be2', cyber_terminal: '#8a2be2', retro_futurista: '#00c2cb', bio_hacker: '#a1ff00' }, technologies: ['Vue.js', 'TypeScript', 'Pinia', 'Electron'], },
 ]);
-// --- FIM DOS DADOS ESTÁTICOS ---
 
-
+// --- FUNÇÕES DE INTERAÇÃO E LIFECYCLE ---
 const typedTextEl = ref<HTMLElement | null>(null);
 const typeWriter = (element: HTMLElement, text: string, speed: number) => { let i = 0; element.innerHTML = ''; function type() { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } } type(); };
-const openLink = (link: string) => { if (link && link !== '#') { window.open(link, '_blank'); } };
+
+const openLink = (project: Project, projectTitle: string) => {
+  if (project.link && project.link !== '#') {
+    if (gtag) gtag('event', 'click_project', { 'project_name': projectTitle, 'project_link': project.link });
+    window.open(project.link, '_blank');
+  }
+};
+
+const trackSocialClick = (network: string) => {
+  if (gtag) gtag('event', 'click_social', { 'social_network': network });
+}
+
+// --- LÓGICA DE IDIOMA E ROTA ---
+const languages = ref([
+  { code: 'pt', label: 'Português' },
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+]);
+
+const currentLanguageLabel = computed(() => {
+  const currentLangCode = (route.params.lang as string) || 'pt';
+  return currentLangCode.toUpperCase();
+});
+
+const changeLanguage = (langCode: string) => {
+  void router.push({ name: 'home', params: { lang: langCode } });
+  if(gtag) gtag('event', 'change_language', { 'language_code': langCode });
+};
+
+const langMap: Record<string, string> = { pt: 'pt-BR', en: 'en-US', es: 'es' };
+watch(() => route.params.lang, (newLang) => {
+  const langKey = (newLang as string) || 'pt';
+  locale.value = langMap[langKey] || 'pt-BR';
+}, { immediate: true });
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown);
   const savedTheme = localStorage.getItem('portfolio-theme');
   if (savedTheme && themes.value.some(t => t.name === savedTheme)) { currentTheme.value = savedTheme as ThemeName; }
   if (typedTextEl.value) { typeWriter(typedTextEl.value, 'Roboticsmind', 150); }
+
+  if (!route.params.lang) {
+    void router.replace({ name: 'home', params: { lang: 'pt' } });
+  }
 });
 
 onUnmounted(() => {
@@ -343,13 +367,21 @@ onUnmounted(() => {
   }
 }
 
+.language-selector {
+  position: absolute; top: 1rem; left: 1.5rem; z-index: 1000;
+}
 .theme-selector {
   position: absolute; top: 1rem; right: 1.5rem; z-index: 1000;
 }
-.theme-selector .theme-button {
+.theme-button {
   color: var(--text-grey-color); text-transform: none; border: 1px solid var(--border-color); opacity: 0.7;
   &.active-theme { background-color: var(--accent-color); color: var(--bg-color); opacity: 1; font-weight: bold; }
 }
+.selector-list {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+}
+
 
 .hero-section { padding-top: 12vh; padding-bottom: 5vh; }
 .terminal-prompt-title { display: flex; align-items: baseline; justify-content: center; white-space: nowrap; }
@@ -438,6 +470,7 @@ onUnmounted(() => {
 @media (max-width: 768px) { .project-card { max-width: 340px; } }
 @media (max-width: 600px) {
   .page-container { padding: 12px; }
+  .language-selector { top: 8px; left: 8px; }
   .theme-selector { top: 8px; right: 8px; }
   .theme-button { font-size: 0.65rem !important; padding: 2px 6px !important; }
   .hero-section { padding-top: 15vh; }
